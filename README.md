@@ -13,7 +13,6 @@ ___基础类 TimeHelper___
 				view.setText(item);
 				return view;
 			}
-
 		};
    
 __Gradle__
@@ -21,6 +20,6 @@ __Gradle__
 Add dependencies in build.gradle of your module
 
 	dependencies {
-    	compile 'com.lenote.rotateview:rotateview:0.0.2'
+    	compile 'com.lenote.views:rotateview:0.0.2'
 	}
 
