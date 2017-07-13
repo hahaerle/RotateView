@@ -1,12 +1,8 @@
-package com.lenote.example;
+package com.lenote.rotateupdown;
 
 import android.content.Context;
 import android.os.Message;
-import android.widget.TextView;
-
-
-import com.lenote.rotateupdown.RotateView;
-import com.lenote.rotateupdown.Constants;
+import android.view.View;
 
 import java.util.List;
 
@@ -14,24 +10,24 @@ import java.util.List;
  * Created by shangerle on 17/7/9.
  */
 
-public class RotateHelper {
+public abstract class AbstractRotateHelper<T> {
 	private RotateView currentRotateView;
 	private Context context;
 
-	public RotateHelper(RotateView currentRotateView) {
+	public AbstractRotateHelper(RotateView currentRotateView) {
 		this.currentRotateView = currentRotateView;
 		this.context = currentRotateView.getContext();
 	}
 
 	private _Handler handler = new _Handler(this);
 
-	private static class _Handler extends WeakRefHandler<RotateHelper> {
-		public _Handler(RotateHelper autoUpDownRotateView) {
+	private static class _Handler extends WeakRefHandler<AbstractRotateHelper> {
+		public _Handler(AbstractRotateHelper autoUpDownRotateView) {
 			super(autoUpDownRotateView);
 		}
 
 		@Override
-		protected void handleMessage(RotateHelper autoUpDownRotateView, Message msg) {
+		protected void handleMessage(AbstractRotateHelper autoUpDownRotateView, Message msg) {
 			if (msg.what == 0) {
 				autoUpDownRotateView.addIndex();
 				autoUpDownRotateView.addNewOne();
@@ -45,10 +41,10 @@ public class RotateHelper {
 			currentIndex = 0;
 	}
 
-	private List<String> list;
+	private List<T> list;
 	private int currentIndex = 0;
 
-	public void setList(List<String> list) {
+	public void setList(List<T> list) {
 		handler.removeMessages(0);
 		this.list = list;
 		currentIndex = 0;
@@ -63,12 +59,13 @@ public class RotateHelper {
 		addView(list.get(index));
 	}
 
-	private void addView(String item) {
-		TextView view = new TextView(context);
-		view.setText(item);
+	private void addView(T item) {
+		View view = onCreateView(context,item);
 		currentRotateView.bindData(view);
 		handler.sendEmptyMessageDelayed(0, Constants.NEW_PLAY_INTERVAL);
 	}
+
+	protected abstract View onCreateView(Context context, T item);
 
 	private int getIndex() {
 		return currentIndex;

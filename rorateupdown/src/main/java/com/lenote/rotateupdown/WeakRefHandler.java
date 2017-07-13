@@ -1,4 +1,4 @@
-package com.lenote.example;
+package com.lenote.rotateupdown;
 
 import android.os.Handler;
 import android.os.Looper;
