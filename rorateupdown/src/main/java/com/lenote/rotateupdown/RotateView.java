@@ -28,9 +28,10 @@ public class RotateView extends FrameLayout {
 		View.inflate(context,R.layout.view_auto_updown_rotate,null);
 	}
 
-	public void bindData(View view) {
+	public void bindData(View view,IViewStatusListener listener) {
 		lastView = currentView;
 		currentView = view;
+		this.listener=listener;
 		startRotate();
 	}
 
@@ -64,6 +65,9 @@ public class RotateView extends FrameLayout {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				removeView(view);
+				if (listener != null) {
+					listener.onRemove(view);
+				}
 			}
 
 			@Override
@@ -88,4 +92,16 @@ public class RotateView extends FrameLayout {
 			lastView = null;
 		}
 	}
+
+
+	IViewStatusListener listener;
+
+	public void setListener(IViewStatusListener listener) {
+		this.listener = listener;
+	}
+
+	public interface IViewStatusListener {
+		void onRemove(View view);
+	}
+
 }

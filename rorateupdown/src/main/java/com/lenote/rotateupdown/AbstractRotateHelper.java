@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Message;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,10 +61,30 @@ public abstract class AbstractRotateHelper<T> {
 	}
 
 	private void addView(T item) {
-		View view = onCreateView(context,item);
-		currentRotateView.bindData(view);
+		View view = null;
+
+		if (!mCacheList.isEmpty()) {
+			view = mCacheList.remove(0);
+		}
+		if (view == null) {
+			view = onCreateView(context, item);
+		}else {
+			onBind(context,view,item);
+		}
+
+		currentRotateView.bindData(view, new RotateView.IViewStatusListener() {
+			@Override
+			public void onRemove(View view) {
+				mCacheList.add(view);
+			}
+		});
 		handler.sendEmptyMessageDelayed(0, Constants.NEW_PLAY_INTERVAL);
 	}
+
+	protected abstract void onBind(Context context, View view, T item);
+
+
+	private List<View> mCacheList = new ArrayList<>();
 
 	protected abstract View onCreateView(Context context, T item);
 
@@ -77,6 +98,7 @@ public abstract class AbstractRotateHelper<T> {
 			currentRotateView.release();
 			currentRotateView = null;
 		}
+		mCacheList.clear();
 		context = null;
 	}
 

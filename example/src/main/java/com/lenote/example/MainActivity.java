@@ -30,6 +30,13 @@ public class MainActivity extends AppCompatActivity {
 		rotateView = (RotateView) findViewById(R.id.rotateView);
 		rotateHelper = new AbstractRotateHelper<String>(rotateView) {
 			@Override
+			protected void onBind(Context context, View view, String item) {
+				if (view instanceof TextView) {
+					((TextView) view).setText(item);
+				}
+			}
+
+			@Override
 			protected View onCreateView(Context context, String item) {
 				TextView view = new TextView(context);
 				view.setText(item);
@@ -38,5 +45,14 @@ public class MainActivity extends AppCompatActivity {
 
 		};
 		rotateHelper.setList(sList);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (rotateHelper != null) {
+			rotateHelper.release();
+			rotateHelper = null;
+		}
 	}
 }
